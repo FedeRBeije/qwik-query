@@ -1,5 +1,5 @@
 import { $, component$ } from '@builder.io/qwik';
-import { routeLoader$ } from '@builder.io/qwik-city';
+import { Link, routeLoader$ } from '@builder.io/qwik-city';
 import { QueryClient } from '@tanstack/query-core';
 import { useQuery, useIsFetching, useMutation } from '~/qwik-query';
 import { createQueryClient } from '~/qwik-query/useQueryClient';
@@ -81,7 +81,8 @@ export default component$(() => {
 			isFetch: {isFetchingSig.value}
 			<br></br>
 			Status: {queryStore.result.status} <br></br>
-			Lenght: {queryStore.result.data.length}
+			Lenght: {queryStore.result.data.length} <br></br>
+			<Link href='/infinity'>infinity</Link>
 		</div>
 	);
 });
