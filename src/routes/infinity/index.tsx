@@ -44,8 +44,12 @@ export default component$(() => {
 			getPreviousPageParam: $(() => {
 				console.log('getPreviousPageParam');
 			}),
-			getNextPageParam: $(() => {
-				console.log('getNextPageParam');
+			getNextPageParam: $((lastPage, pages) => {
+				console.log('getNextPageParam', { lastPage, pages, length: pages.length });
+				if (pages.length < 3) {
+					return pages.length;
+				}
+				return undefined;
 			}),
 		},
 		useRouteLoader().value
@@ -54,17 +58,20 @@ export default component$(() => {
 	return (
 		<div>
 			<button
+				disabled={!queryStore.result.hasNextPage}
 				onClick$={() => {
-					queryStore.options.getNextPageParam()
+					console.log('refetch', queryStore);
+					queryStore.result.fetchNextPage()
 				}}
 			>
-				getNextPageParam
+				fetchNextPage
 			</button>
 			<br></br>
 			isFetch: {isFetchingSig.value}
 			<br></br>
+			hasNextPage: {queryStore.result.hasNextPage ? 'true' : 'false'} <br></br>
 			Status: {queryStore.result.status} <br></br>
-			Lenght: {queryStore.result.data.length}
+			Lenght: {queryStore.result.data?.pages?.length} <br></br>
 		</div>
 	);
 });
