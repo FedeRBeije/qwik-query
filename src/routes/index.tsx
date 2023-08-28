@@ -60,7 +60,7 @@ export default component$(() => {
 					queryStore.options = { ...queryStore.options, refetchInterval: 5000 };
 				}}
 			>
-				Test
+				change refetchInterval
 			</button>
 			<button
 				onClick$={() => {
@@ -79,6 +79,7 @@ export default component$(() => {
 			</button>
 			<br></br>
 			isFetch: {isFetchingSig.value}
+			<br></br>
 			Status: {queryStore.result.status} <br></br>
 			Lenght: {queryStore.result.data.length}
 		</div>
