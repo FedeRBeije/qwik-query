@@ -2,12 +2,9 @@ import { $, component$ } from '@builder.io/qwik';
 import { routeLoader$ } from '@builder.io/qwik-city';
 import { QueryClient } from '@tanstack/query-core';
 import {
-	useQuery,
-	useIsFetching,
-	useMutation,
 	useInfiniteQuery,
+	useIsFetching
 } from '~/qwik-query';
-import { createQueryClient } from '~/qwik-query/useQueryClient';
 import { queryClientState } from '~/qwik-query/utils';
 
 export const queryFuntion = $(async (): Promise<Array<any>> => {
@@ -41,8 +38,9 @@ export default component$(() => {
 		{
 			queryKey,
 			queryFn: queryFuntion,
-			getPreviousPageParam: $(() => {
-				console.log('getPreviousPageParam');
+			getPreviousPageParam: $((firstPage, pages) => {
+				console.log('getPreviousPageParam', { firstPage: firstPage.nextCursor, pages, length: pages.length });
+				return pages.length > 1
 			}),
 			getNextPageParam: $((lastPage, pages) => {
 				console.log('getNextPageParam', { lastPage, pages, length: pages.length });
@@ -58,13 +56,22 @@ export default component$(() => {
 	return (
 		<div>
 			<button
+				disabled={!queryStore.result.hasPreviousPage}
+				onClick$={() => {
+					console.log('refetch', queryStore);
+					queryStore.result.fetchPreviousPage()
+				}}
+			>
+				{'<---'}
+			</button>
+			<button
 				disabled={!queryStore.result.hasNextPage}
 				onClick$={() => {
 					console.log('refetch', queryStore);
 					queryStore.result.fetchNextPage()
 				}}
 			>
-				fetchNextPage
+				{'--->'}
 			</button>
 			<br></br>
 			isFetch: {isFetchingSig.value}

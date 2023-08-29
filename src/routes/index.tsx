@@ -80,8 +80,8 @@ export default component$(() => {
 			<br></br>
 			isFetch: {isFetchingSig.value}
 			<br></br>
-			Status: {queryStore.result.status} <br></br>
-			Lenght: {queryStore.result.data.length} <br></br>
+			Status: {queryStore.result?.status} <br></br>
+			Lenght: {queryStore.result?.data.length} <br></br>
 			<Link href='/infinity'>infinity</Link>
 		</div>
 	);
