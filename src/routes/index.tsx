@@ -5,10 +5,10 @@ import { useQuery, useIsFetching, useMutation } from '~/qwik-query';
 import { createQueryClient } from '~/qwik-query/useQueryClient';
 import { queryClientState } from '~/qwik-query/utils';
 
-export const queryFuntion = $(async (): Promise<Array<any>> => {
+export const queryFunction = $(async (): Promise<Array<any>> => {
 	const response = await fetch(
 		'https://jsonplaceholder.typicode.com/' +
-			(Math.random() > 0.5 ? 'users' : 'posts'),
+		(Math.random() > 0.5 ? 'users' : 'posts'),
 		{
 			method: 'GET',
 		}
@@ -16,7 +16,7 @@ export const queryFuntion = $(async (): Promise<Array<any>> => {
 	return response.json();
 });
 
-const queryKey = ['post'];
+const queryKey = ['post'] as const;
 
 export const useRouteLoader = routeLoader$(async () => {
 	const queryClient = new QueryClient();
@@ -36,8 +36,11 @@ export const useRouteLoader = routeLoader$(async () => {
 });
 
 export default component$(() => {
-	const queryStore = useQuery(
-		{ queryKey, queryFn: queryFuntion, refetchInterval: 1000 },
+	const queryStore = useQuery({
+		queryKey,
+		queryFn: queryFunction,
+		refetchInterval: 1000
+	},
 		useRouteLoader().value
 	);
 	const isFetchingSig = useIsFetching();
@@ -66,7 +69,7 @@ export default component$(() => {
 				onClick$={() => {
 					mutationStore.options = {
 						...mutationStore.options,
-						onError: $(() => {}),
+						onError: $(() => { }),
 					};
 					mutationStore.mutate('', {
 						onSuccess: () => {
@@ -80,8 +83,8 @@ export default component$(() => {
 			<br></br>
 			isFetch: {isFetchingSig.value}
 			<br></br>
-			Status: {queryStore.result?.status} <br></br>
-			Lenght: {queryStore.result?.data.length} <br></br>
+			Status: {queryStore.result.status} <br></br>
+			Lenght: {queryStore.result.data?.length} <br></br>
 			<Link href='/infinity'>infinity</Link>
 		</div>
 	);

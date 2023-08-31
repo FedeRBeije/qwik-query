@@ -5,17 +5,18 @@ import {
 	useVisibleTask$,
 	type NoSerialize,
 } from '@builder.io/qwik';
-import {
+import type {
 	DefaultedQueryObserverOptions,
+	QueryKey} from '@tanstack/query-core';
+import {
 	InfiniteQueryObserver,
 	QueryClient,
-	QueryKey,
 	QueryObserver,
 	hydrate,
 	notifyManager,
 	type DehydratedState,
 } from '@tanstack/query-core';
-import { QueryStore } from './types';
+import type { QueryStore } from './types';
 import { createQueryClient } from './useQueryClient';
 
 export enum ObserverType {
