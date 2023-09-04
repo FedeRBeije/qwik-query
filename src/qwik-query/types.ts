@@ -3,6 +3,7 @@
 import type { QRL } from "@builder.io/qwik";
 import type {
   DefaultError,
+  DefaultedQueryObserverOptions,
   DefinedInfiniteQueryObserverResult,
   DefinedQueryObserverResult,
   InfiniteQueryObserverOptions,
@@ -207,5 +208,12 @@ export type UseMutationResult<
   TVariables = unknown,
   TContext = unknown,
 > = UseBaseMutationResult<TData, TError, TVariables, TContext>;
+
+export type QueryStore = {
+  result: any;
+  options:
+    | DefaultedQueryObserverOptions<unknown, Error, unknown, unknown, QueryKey>
+    | InfiniteQueryObserverOptions<unknown, Error, unknown, unknown, QueryKey>;
+};
 
 type Override<A, B> = { [K in keyof A]: K extends keyof B ? B[K] : A[K] };
