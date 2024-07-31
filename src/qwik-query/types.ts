@@ -28,6 +28,18 @@ type QwikQueryFunction<
   (context: QueryFunctionContext<TQueryKey, TPageParam>) => T | Promise<T>
 >;
 
+// Types guard
+export function isInfiniteQueryObserverResult<TData, TError>(
+  result:
+    | QueryObserverResult<TData, TError>
+    | InfiniteQueryObserverResult<TData, TError>,
+): result is InfiniteQueryObserverResult<TData, TError> {
+  return (
+    (result as InfiniteQueryObserverResult<TData, TError>).hasNextPage !==
+    undefined
+  );
+}
+
 type QwikQueryObserverOptions<
   TQueryFnData = unknown,
   TError = DefaultError,
@@ -47,15 +59,12 @@ export interface QwikUseBaseQueryOptions<
   TData = TQueryFnData,
   TQueryData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
-> extends WithRequired<
-    QwikQueryObserverOptions<
-      TQueryFnData,
-      TError,
-      TData,
-      TQueryData,
-      TQueryKey
-    >,
-    "queryKey"
+> extends QueryObserverOptions<
+    TQueryFnData,
+    TError,
+    TData,
+    TQueryData,
+    TQueryKey
   > {}
 
 export interface UseQueryOptions<
@@ -209,11 +218,21 @@ export type UseMutationResult<
   TContext = unknown,
 > = UseBaseMutationResult<TData, TError, TVariables, TContext>;
 
-export type QueryStore = {
+export type QueryStore<
+  TQueryFnData,
+  TError,
+  TData,
+  TQueryData,
+  TQueryKey extends QueryKey,
+> = {
   result: any;
-  options:
-    | DefaultedQueryObserverOptions<unknown, Error, unknown, unknown, QueryKey>
-    | InfiniteQueryObserverOptions<unknown, Error, unknown, unknown, QueryKey>;
+  options: QwikUseBaseQueryOptions<
+    TQueryFnData,
+    TError,
+    TData,
+    TQueryData,
+    TQueryKey
+  >;
 };
 
 type Override<A, B> = { [K in keyof A]: K extends keyof B ? B[K] : A[K] };

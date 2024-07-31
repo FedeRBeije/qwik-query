@@ -1,5 +1,10 @@
-import { component$, Slot } from "@builder.io/qwik";
+import { component$, noSerialize, Slot } from "@builder.io/qwik";
 import type { RequestHandler } from "@builder.io/qwik-city";
+import { QueryClient } from "@tanstack/query-core";
+//import QueryClientProvider from "~/qwik-query/QueryClientProvider";
+
+//NOTE: i dont understand why here it is needed to use noSerialize
+export const queryClient = noSerialize(new QueryClient());
 
 export const onGet: RequestHandler = async ({ cacheControl }) => {
   // Control caching for this request for best performance and to reduce hosting costs:
@@ -15,3 +20,11 @@ export const onGet: RequestHandler = async ({ cacheControl }) => {
 export default component$(() => {
   return <Slot />;
 });
+
+/*export default component$(() => {
+  return (
+    <QueryClientProvider client={queryClient}>
+      <Slot />
+    </QueryClientProvider>
+  );
+});*/
