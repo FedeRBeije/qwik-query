@@ -9,6 +9,7 @@ import type {
   InfiniteQueryObserverResult,
   QueryKey,
   QueryObserverResult,
+  DehydratedState,
 } from "@tanstack/query-core";
 import {
   InfiniteQueryObserver,
@@ -16,7 +17,6 @@ import {
   QueryObserver,
   hydrate,
   notifyManager,
-  type DehydratedState,
 } from "@tanstack/query-core";
 import {
   isInfiniteQueryObserverResult,
@@ -48,7 +48,7 @@ export const useBaseQuery = <
     TQueryKey
   >,
   initialState?: DehydratedState,
-  queryClient?: QueryClient,
+  queryClient?: NoSerialize<QueryClient>,
 ):
   | QueryObserverResult<TData, TError>
   | InfiniteQueryObserverResult<TData, TError> => {
@@ -61,7 +61,9 @@ export const useBaseQuery = <
     }
   }
 
-  const client = createQueryClient(); // Get the query client from the context
+  const client = new QueryClient(); // Get the query client from the context
+  //  const test = useQueryClient(queryClient);
+  // console.log("test", test);
 
   // If there is an initial state, hydrate the client
   if (initialState) {
@@ -93,7 +95,7 @@ export const useBaseQuery = <
       TData,
       TQueryData,
       TQueryKey
-    >(store, options, observerType, client);
+    >(store, options, observerType);
     observerSig.value = observer;
     store.options = defaultedOptions;
 
@@ -128,7 +130,7 @@ const createQueryObserver = <
     TQueryKey
   >,
   observerType: ObserverType,
-  client: QueryClient,
+  //  client: QueryClient,
 ) => {
   // Prepare the observer based on the type. If it is infinite, use InfiniteQueryObserver
   //NOTE: Not sure if it is right to handle here the infinite case
@@ -136,6 +138,8 @@ const createQueryObserver = <
     observerType === ObserverType.base
       ? QueryObserver
       : (InfiniteQueryObserver as typeof QueryObserver);
+
+  const client = createQueryClient();
 
   const defaultedOptions = client.defaultQueryOptions(options);
   defaultedOptions._optimisticResults = "optimistic";

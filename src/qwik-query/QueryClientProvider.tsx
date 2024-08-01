@@ -22,22 +22,29 @@ import {
   Slot,
   component$,
   createContextId,
+  noSerialize,
   useContext,
   useContextProvider,
-  useTask$,
+  useVisibleTask$,
 } from "@builder.io/qwik";
 import { isServer } from "@builder.io/qwik/build";
-import { type QueryClient } from "@tanstack/query-core";
+import { type QueryClientConfig, QueryClient } from "@tanstack/query-core";
 
 interface QueryClientProviderProps {
   client: NoSerialize<QueryClient>;
+  config?: QueryClientConfig;
 }
 
 // -- Context id
-export const CTX = createContextId<QueryClient | undefined>("queryClient");
+export const QUERYCLIENTCTX =
+  createContextId<NoSerialize<QueryClient>>("queryClient");
+export const OPTIONSCTX = createContextId<QueryClientConfig | undefined>(
+  "options",
+);
 
-export const useQueryClient = (queryClient?: QueryClient) => {
-  const client = useContext(CTX); // Get the query client from the context
+export const useQueryClient = (queryClient?: NoSerialize<QueryClient>) => {
+  let client = useContext(QUERYCLIENTCTX); // Get the query client from the context
+  const config = useContext(OPTIONSCTX);
 
   // If we are on the server, we should not be able to get the query client
   if (isServer) {
@@ -51,26 +58,25 @@ export const useQueryClient = (queryClient?: QueryClient) => {
 
   // If the query client is not provided and the client is not set, throw an error
   if (!client) {
-    throw new Error("No QueryClient set, use QueryClientProvider to set one");
+    client = noSerialize(new QueryClient(config)); // Create a new query client
   }
 
   // If the query client is not provided, return the client from the context
   return client;
 };
 
-export default component$<QueryClientProviderProps>(
-  ({ client }): JSX.Element => {
-    // Provide the query client to the context under the Context ID.
-    useContextProvider(CTX, client);
+export default component$<QueryClientProviderProps>(({ client, config }) => {
+  // Provide the query client to the context under the Context ID.
+  useContextProvider(QUERYCLIENTCTX, client);
+  useContextProvider(OPTIONSCTX, config);
 
-    //eslint-disable-next-line
-    useTask$(({ cleanup }) => {
-      client && client.mount(); // Mount the query client
-      cleanup(() => {
-        client && client.unmount(); // Unmount the query client if the component is removed
-      });
+  //eslint-disable-next-line
+  useVisibleTask$(({ cleanup }) => {
+    client && client.mount(); // Mount the query client
+    cleanup(() => {
+      client && client.unmount(); // Unmount the query client if the component is removed
     });
+  });
 
-    return <Slot />;
-  },
-);
+  return <Slot />;
+});

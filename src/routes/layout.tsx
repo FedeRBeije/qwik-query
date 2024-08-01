@@ -1,9 +1,9 @@
 import { component$, noSerialize, Slot } from "@builder.io/qwik";
 import type { RequestHandler } from "@builder.io/qwik-city";
 import { QueryClient } from "@tanstack/query-core";
-//import QueryClientProvider from "~/qwik-query/QueryClientProvider";
+import QueryClientProvider from "~/qwik-query/QueryClientProvider";
 
-//NOTE: i dont understand why here it is needed to use noSerialize
+//NOTE: i don't understand why here, it is needed to use noSerialize
 export const queryClient = noSerialize(new QueryClient());
 
 export const onGet: RequestHandler = async ({ cacheControl }) => {
@@ -17,14 +17,14 @@ export const onGet: RequestHandler = async ({ cacheControl }) => {
   });
 };
 
-export default component$(() => {
-  return <Slot />;
-});
-
 /*export default component$(() => {
+  return <Slot />;
+});*/
+
+export default component$(() => {
   return (
-    <QueryClientProvider client={queryClient}>
+    <QueryClientProvider client={queryClient} config={{}}>
       <Slot />
     </QueryClientProvider>
   );
-});*/
+});
