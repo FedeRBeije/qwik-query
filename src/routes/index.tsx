@@ -59,7 +59,7 @@ export default component$(() => {
   });
   return (
     <div>
-      <button onClick$={() => {}}>change refetchInterval</button>
+      <button onClick$={$(() => queryStore.refetch())}>refetch</button>
       <button
         onClick$={() => {
           mutationStore.options = {
@@ -80,6 +80,28 @@ export default component$(() => {
       <br></br>
       Status: {queryStore.status} <br></br>
       Lenght: {queryStore.data?.length} <br></br>
+      {Object.entries(queryStore).map(([key, value]) => (
+        <div key={key}>
+          {typeof value === "function" ? (
+            <></>
+          ) : (
+            <div style={{ margin: 10 }}>
+              <div
+                style={{
+                  fontSize: 20,
+                  display: "flex",
+                  flex: 1,
+                  flexDirection: "row",
+                  alignItems: "center",
+                  gap: 10,
+                }}
+              >
+                <p>{key}: </p> {JSON.stringify(value, null, 2)}
+              </div>
+            </div>
+          )}
+        </div>
+      ))}
       <Link href="/infinity">infinity</Link>
     </div>
   );
